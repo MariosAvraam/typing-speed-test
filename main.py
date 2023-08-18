@@ -3,27 +3,28 @@ from tkinter import Text, Label, Button
 import time
 import requests
 
-class TypingTestApp:
-    RUN_TIME = 10 * 1000
-    SAMPLE_TEXT_WORDS = 50
-    FONT = ("Arial", 12, "bold")
+# Constants
+RUN_TIME = 10 * 1000
+SAMPLE_TEXT_WORDS = 50
+FONT = ("Arial", 12, "bold")
+MILLISECONDS_IN_SECOND = 1000
 
+class TypingTestApp:
     def __init__(self, root):
+        """Initializes the Typing Test App."""
         self.root = root
         self.start_time = None
-        self.TIMER_DURATION = self.RUN_TIME / 1000
+        self.TIMER_DURATION = RUN_TIME / MILLISECONDS_IN_SECOND
         self.remaining_time = self.TIMER_DURATION
         self.timer_id = None
         self.update_timer_id = None
 
         self.setup_gui()
 
-        self.start_button = Button(self.button_frame, text="Start", command=self.start_typing_test)
-        self.start_button.grid(row=0, column=0, padx=10)
-
 
     def setup_gui(self):
-        self.sample_label = Label(self.root, text="This is a sample text for the user to type.", wraplength=400, padx=10, pady=10, font=self.FONT)
+        """Sets up the GUI elements."""
+        self.sample_label = Label(self.root, text="This is a sample text for the user to type.", wraplength=400, padx=10, pady=10, font=FONT)
         self.sample_label.pack(pady=20)
 
         self.user_input = Text(self.root, wrap="word", height=5, width=50, padx=10, pady=10, state=tk.DISABLED)
@@ -48,7 +49,8 @@ class TypingTestApp:
         self.wpm_label.pack(pady=20)
 
     def start_typing_test(self):
-        # Disable the start and change text buttons
+        """Begins the typing test."""
+
         self.start_button.config(state=tk.DISABLED)
         self.change_text_button.config(state=tk.DISABLED)
 
@@ -62,7 +64,7 @@ class TypingTestApp:
         self.user_input.delete(1.0, tk.END)
         self.user_input.focus_set()
         self.start_time = time.time()
-        self.timer_id = self.root.after(self.RUN_TIME, self.stop_typing_test)
+        self.timer_id = self.root.after(RUN_TIME, self.stop_typing_test)
 
     def stop_typing_test(self):
         # Enable the start and change text buttons
@@ -103,6 +105,7 @@ class TypingTestApp:
         self.change_text_button.config(state=tk.NORMAL)
 
     def get_random_words(self, count=50):
+        """Fetches random words for the typing test."""
         url = f"https://random-word-api.herokuapp.com/word?number={count}"
         try:
             response = requests.get(url)
