@@ -19,6 +19,7 @@ git clone https://github.com/MariosAvraam/typing-speed-test.git
 
 2. Navigate to the cloned directory and create a virtual environment (optional, but recommended):
 ```bash
+cd typing-speed-test
 python -m venv venv
 source venv/bin/activate # On Windows use: .\venv\Scripts\activate
 ```
