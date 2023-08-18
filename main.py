@@ -1,12 +1,16 @@
 import tkinter as tk
 from tkinter import Text, Label, Button, StringVar
 import time
+import requests
+
 
 start_time = None
 RUN_TIME = 10 * 1000 # in Seconds to Milliseconds
 
 def start_typing_test():
     global start_time
+
+    change_text_button.config(state=tk.DISABLED)  
     stop_button.config(state=tk.NORMAL)  # Enable the Stop button
     user_input.config(state=tk.NORMAL)  # Enable the Text widget
     user_input.delete(1.0, tk.END)
@@ -16,6 +20,7 @@ def start_typing_test():
 
 
 def stop_typing_test():
+    change_text_button.config(state=tk.NORMAL)  
     stop_button.config(state=tk.DISABLED)  # Disable the Stop button
     user_input.config(state=tk.DISABLED)  # Disable the Text widget
     if start_time is None:  # Ensure the test was started
@@ -28,6 +33,19 @@ def stop_typing_test():
     
     # Here, you can display the WPM to the user using a label or a messagebox
     print(f"Words Per Minute: {wpm}")
+
+def get_random_words(count=1):
+    url = f"https://random-word-api.herokuapp.com/word?number={count}"
+    response = requests.get(url)
+    return response.json()
+
+def change_sample_text():
+    # Fetch 5 random words and form a sample sentence
+    words = get_random_words(5)
+    chosen_text = ' '.join(words)
+    
+    sample_label.config(text=chosen_text)
+
 
 # Create the main window
 root = tk.Tk()
@@ -45,6 +63,9 @@ user_input.pack(pady=20)
 # Add "Start" and "Stop" buttons
 start_button = Button(root, text="Start", command=start_typing_test)
 start_button.pack(pady=10, side="left", padx=50)
+
+change_text_button = Button(root, text="Change Text", command=change_sample_text)
+change_text_button.pack(pady=10, side="bottom", padx=50)
 
 stop_button = Button(root, text="Stop", command=stop_typing_test, state=tk.DISABLED)
 stop_button.pack(pady=10, side="right", padx=50)
