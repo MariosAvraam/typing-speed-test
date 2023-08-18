@@ -43,7 +43,7 @@ def get_random_words(count=1):
         return response.json()
     except requests.RequestException:
         # Return a default list of words in case of an error
-        return ["error", "fetching", "random", "words", "please", "try", "again"]
+        return ["Error", "fetching", "random", "words,", "please", "try", "again."]
 
 
 def change_sample_text():
