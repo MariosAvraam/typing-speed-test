@@ -6,6 +6,8 @@ import requests
 
 start_time = None
 RUN_TIME = 10 * 1000 # in Seconds to Milliseconds
+SAMPLE_TEXT_WORDS = 50
+FONT = ("Arial", 12, "bold")
 
 def start_typing_test():
     global start_time
@@ -30,12 +32,16 @@ def stop_typing_test():
     typed_text = user_input.get(1.0, tk.END).strip()  # Get the user's typed text
     words_typed = len(typed_text.split())  # Count the number of words typed by the user
     wpm = (words_typed / elapsed_time) * 60  # Calculate words per minute
-    correct_words = sum(1 for w1, w2 in zip(typed_text.split(), sample_label['text'].split()) if w1 == w2)
-    accuracy = (correct_words / len(sample_label['text'].split())) * 100
+    user_words = typed_text.split()
+    sample_words_up_to_typed_length = sample_label['text'].split()[:len(user_words)]
+
+    correct_words = sum(1 for w1, w2 in zip(user_words, sample_words_up_to_typed_length) if w1 == w2)
+    accuracy = (correct_words / len(user_words)) * 100 if user_words else 0
+
     wpm_label.config(text=f"Words Per Minute: {round(wpm, 2)} | Accuracy: {round(accuracy, 2)}%")
 
 
-def get_random_words(count=1):
+def get_random_words(count=SAMPLE_TEXT_WORDS):
     url = f"https://random-word-api.herokuapp.com/word?number={count}"
     try:
         response = requests.get(url)
@@ -48,7 +54,7 @@ def get_random_words(count=1):
 
 def change_sample_text():
     # Fetch 5 random words and form a sample sentence
-    words = get_random_words(5)
+    words = get_random_words()
     chosen_text = ' '.join(words)
     
     sample_label.config(text=chosen_text)
@@ -60,7 +66,7 @@ root.title("Typing Speed Test")
 
 # Add a label to display the sample text
 sample_text = "This is a sample text for the user to type."
-sample_label = Label(root, text=sample_text, wraplength=400, padx=10, pady=10)
+sample_label = Label(root, text=sample_text, wraplength=400, padx=10, pady=10, font=FONT)
 sample_label.pack(pady=20)
 
 # Add a text widget for the user to type into
