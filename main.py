@@ -1,11 +1,11 @@
 import tkinter as tk
-from tkinter import Text, Label, Button, StringVar
+from tkinter import Text, Label, Button
 import time
 import requests
 
 
 start_time = None
-RUN_TIME = 10 * 1000 # in Seconds to Milliseconds
+RUN_TIME = 60 * 1000 # in Seconds to Milliseconds
 SAMPLE_TEXT_WORDS = 50
 FONT = ("Arial", 12, "bold")
 
@@ -73,15 +73,19 @@ sample_label.pack(pady=20)
 user_input = Text(root, wrap="word", height=5, width=50, padx=10, pady=10, state=tk.DISABLED)
 user_input.pack(pady=20)
 
-# Add "Start" and "Stop" buttons
-start_button = Button(root, text="Start", command=start_typing_test)
-start_button.pack(pady=10, side="left", padx=50)
+# Create a frame for the buttons
+button_frame = tk.Frame(root)
+button_frame.pack(pady=10)
 
-change_text_button = Button(root, text="Change Text", command=change_sample_text)
-change_text_button.pack(pady=10, side="bottom", padx=50)
+# Add "Start", "Change Text", and "Stop" buttons within the frame
+start_button = Button(button_frame, text="Start", command=start_typing_test)
+start_button.grid(row=0, column=0, padx=10)
 
-stop_button = Button(root, text="Stop", command=stop_typing_test, state=tk.DISABLED)
-stop_button.pack(pady=10, side="right", padx=50)
+change_text_button = Button(button_frame, text="Change Text", command=change_sample_text)
+change_text_button.grid(row=0, column=1, padx=10)
+
+stop_button = Button(button_frame, text="Stop", command=stop_typing_test, state=tk.DISABLED)
+stop_button.grid(row=0, column=2, padx=10)
 
 # Add a label to display the user's typing speed
 wpm_label = Label(root, text="Your WPM will be displayed here.", padx=10, pady=10)
