@@ -30,14 +30,21 @@ def stop_typing_test():
     typed_text = user_input.get(1.0, tk.END).strip()  # Get the user's typed text
     words_typed = len(typed_text.split())  # Count the number of words typed by the user
     wpm = (words_typed / elapsed_time) * 60  # Calculate words per minute
-    
-    # Here, you can display the WPM to the user using a label or a messagebox
-    print(f"Words Per Minute: {wpm}")
+    correct_words = sum(1 for w1, w2 in zip(typed_text.split(), sample_label['text'].split()) if w1 == w2)
+    accuracy = (correct_words / len(sample_label['text'].split())) * 100
+    wpm_label.config(text=f"Words Per Minute: {round(wpm, 2)} | Accuracy: {round(accuracy, 2)}%")
+
 
 def get_random_words(count=1):
     url = f"https://random-word-api.herokuapp.com/word?number={count}"
-    response = requests.get(url)
-    return response.json()
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        return response.json()
+    except requests.RequestException:
+        # Return a default list of words in case of an error
+        return ["error", "fetching", "random", "words", "please", "try", "again"]
+
 
 def change_sample_text():
     # Fetch 5 random words and form a sample sentence
@@ -69,6 +76,10 @@ change_text_button.pack(pady=10, side="bottom", padx=50)
 
 stop_button = Button(root, text="Stop", command=stop_typing_test, state=tk.DISABLED)
 stop_button.pack(pady=10, side="right", padx=50)
+
+# Add a label to display the user's typing speed
+wpm_label = Label(root, text="Your WPM will be displayed here.", padx=10, pady=10)
+wpm_label.pack(pady=20)
 
 # Start the Tkinter main loop
 root.mainloop()
