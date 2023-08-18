@@ -5,12 +5,21 @@ import requests
 
 
 start_time = None
-RUN_TIME = 60 * 1000 # in Seconds to Milliseconds
+RUN_TIME = 10 * 1000 # in Seconds to Milliseconds
 SAMPLE_TEXT_WORDS = 50
 FONT = ("Arial", 12, "bold")
+TIMER_DURATION = RUN_TIME / 1000
+remaining_time = TIMER_DURATION
+timer_id = None
+stop_timer_id = None
+
+
 
 def start_typing_test():
-    global start_time
+    global start_time, remaining_time, stop_timer_id
+    remaining_time = TIMER_DURATION
+    timer_label.config(text=f"Time Left: {TIMER_DURATION} seconds")
+    update_timer()  # Start the timer
 
     change_text_button.config(state=tk.DISABLED)  
     stop_button.config(state=tk.NORMAL)  # Enable the Stop button
@@ -18,10 +27,15 @@ def start_typing_test():
     user_input.delete(1.0, tk.END)
     user_input.focus_set()  # Set focus to the Text widget to start typing immediately
     start_time = time.time()
-    root.after(RUN_TIME, stop_typing_test)
+    stop_timer_id = root.after(RUN_TIME, stop_typing_test)
 
 
 def stop_typing_test():
+    global timer_id, remaining_time, stop_timer_id
+    if stop_timer_id:
+        root.after_cancel(stop_timer_id)
+    remaining_time = 0  # Stop the timer
+
     change_text_button.config(state=tk.NORMAL)  
     stop_button.config(state=tk.DISABLED)  # Disable the Stop button
     user_input.config(state=tk.DISABLED)  # Disable the Text widget
@@ -60,6 +74,19 @@ def change_sample_text():
     sample_label.config(text=chosen_text)
 
 
+def update_timer():
+    global remaining_time, timer_id
+    print(f"Remaining time: {remaining_time}")
+    print(f"Run Time: {RUN_TIME}")
+    print(f"TIMER_DURATION: {TIMER_DURATION}")
+    print(f"start_time: {start_time}\n")
+    if remaining_time > 0:
+        remaining_time -= 1
+        timer_label.config(text=f"Time Left: {remaining_time} seconds")
+        timer_id = root.after(1000, update_timer)
+
+
+
 # Create the main window
 root = tk.Tk()
 root.title("Typing Speed Test")
@@ -86,6 +113,9 @@ change_text_button.grid(row=0, column=1, padx=10)
 
 stop_button = Button(button_frame, text="Stop", command=stop_typing_test, state=tk.DISABLED)
 stop_button.grid(row=0, column=2, padx=10)
+
+timer_label = Label(root, text=f"Time Left: {TIMER_DURATION} seconds", padx=10, pady=10)
+timer_label.pack(pady=10)
 
 # Add a label to display the user's typing speed
 wpm_label = Label(root, text="Your WPM will be displayed here.", padx=10, pady=10)
