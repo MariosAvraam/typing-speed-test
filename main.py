@@ -7,12 +7,17 @@ RUN_TIME = 10 * 1000 # in Seconds to Milliseconds
 
 def start_typing_test():
     global start_time
+    stop_button.config(state=tk.NORMAL)  # Enable the Stop button
+    user_input.config(state=tk.NORMAL)  # Enable the Text widget
     user_input.delete(1.0, tk.END)
-    start_time = time.time()  # Record the current time as the start time
-    print(start_time)
-    root.after(RUN_TIME, stop_typing_test)  # Schedule the stop_typing_test to run after 1 minute
+    user_input.focus_set()  # Set focus to the Text widget to start typing immediately
+    start_time = time.time()
+    root.after(RUN_TIME, stop_typing_test)
+
 
 def stop_typing_test():
+    stop_button.config(state=tk.DISABLED)  # Disable the Stop button
+    user_input.config(state=tk.DISABLED)  # Disable the Text widget
     if start_time is None:  # Ensure the test was started
         return
     
@@ -34,14 +39,14 @@ sample_label = Label(root, text=sample_text, wraplength=400, padx=10, pady=10)
 sample_label.pack(pady=20)
 
 # Add a text widget for the user to type into
-user_input = Text(root, wrap="word", height=5, width=50, padx=10, pady=10)
+user_input = Text(root, wrap="word", height=5, width=50, padx=10, pady=10, state=tk.DISABLED)
 user_input.pack(pady=20)
 
 # Add "Start" and "Stop" buttons
 start_button = Button(root, text="Start", command=start_typing_test)
 start_button.pack(pady=10, side="left", padx=50)
 
-stop_button = Button(root, text="Stop", command=stop_typing_test)
+stop_button = Button(root, text="Stop", command=stop_typing_test, state=tk.DISABLED)
 stop_button.pack(pady=10, side="right", padx=50)
 
 # Start the Tkinter main loop
